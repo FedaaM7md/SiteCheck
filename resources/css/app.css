@@ -1,0 +1,483 @@
+﻿/*
+ * SiteCheck — design tokens and component layer.
+ * Copyright (c) 2026 Fedaa Mohamed. All rights reserved.
+ *
+ * Identity: a clinical, lab-report document. White paper, cobalt ink,
+ * a slate body, IBM Plex Mono for records and a graded "stamp".
+ */
+
+@import 'tailwindcss';
+@import '@fontsource-variable/noto-sans-arabic';
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-600.css';
+
+@source '../views/**/*.blade.php';
+
+@theme {
+    --font-sans: 'Noto Sans Arabic Variable', 'Noto Sans Arabic', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+    /* IBM Plex Mono has no Arabic glyphs: fall back to Noto for Arabic so a
+       monospace technical string never breaks Arabic text. */
+    --font-mono: 'IBM Plex Mono', 'Noto Sans Arabic Variable', 'Noto Sans Arabic', ui-monospace, 'Cascadia Code', 'Consolas', 'Liberation Mono', monospace;
+
+    /* Cobalt (primary) — from #1F4FD8 */
+    --color-brand-50: #f1f5fe;
+    --color-brand-100: #e0e9fc;
+    --color-brand-200: #c3d4f9;
+    --color-brand-300: #98b5f3;
+    --color-brand-400: #678eeb;
+    --color-brand-500: #4068e2;
+    --color-brand-600: #1f4fd8;
+    --color-brand-700: #1b43b8;
+    --color-brand-800: #1a3a97;
+    --color-brand-900: #19317a;
+    --color-brand-950: #141f49;
+
+    /* Slate neutrals (report ink) */
+    --color-ink: #3b4252;
+    --color-soft: #66707f;
+    --color-faint: #98a1b0;
+    --color-report: #f3f5f8;
+    --color-report-strong: #e9edf2;
+    --color-line: #dde3ea;
+    --color-line-strong: #c6ced9;
+
+    /* Semantic verdicts */
+    --color-pass: #1e8e5a;
+    --color-pass-soft: #e2f3ea;
+    --color-warn: #c98a06;
+    --color-warn-soft: #fbf1db;
+    --color-fail: #c8352e;
+    --color-fail-soft: #fbe6e4;
+    --color-info: #486581;
+    --color-info-soft: #e9eef3;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        background-color: #ffffff;
+        color: var(--color-ink);
+        font-feature-settings: 'kern', 'liga';
+        text-rendering: optimizeLegibility;
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--color-brand-600);
+        outline-offset: 2px;
+        border-radius: 3px;
+    }
+
+    ::selection {
+        background: var(--color-brand-100);
+        color: var(--color-brand-950);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.001ms !important;
+            transition-duration: 0.001ms !important;
+        }
+    }
+}
+
+@layer components {
+    .skip-link {
+        @apply sr-only;
+    }
+
+    .skip-link:focus {
+        @apply not-sr-only fixed start-4 top-4 z-50 rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-lg;
+    }
+
+    /* Buttons — flat, squared, clinical */
+    .btn {
+        @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-colors duration-150;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-colors duration-150 bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-colors duration-150 border border-line-strong bg-white text-ink hover:border-brand-400 hover:text-brand-700 hover:bg-brand-50;
+    }
+
+    .btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-colors duration-150 text-soft hover:bg-report hover:text-ink;
+    }
+
+    .btn-danger {
+        @apply inline-flex items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-semibold transition-colors duration-150 border border-fail/40 bg-white text-fail hover:bg-fail-soft;
+    }
+
+    .btn-sm {
+        @apply rounded px-2.5 py-1.5 text-xs;
+    }
+
+    /* Report panel — like a document section on white paper */
+    .panel {
+        @apply rounded-md border border-line bg-white;
+    }
+
+    .panel-soft {
+        @apply rounded-md border border-line bg-report;
+    }
+
+    /* The uppercase monospace heading strip of a lab report section */
+    /* Translatable label: sans in both locales, no tracking/uppercase so Arabic
+       stays connected. */
+    .section-label {
+        @apply text-xs font-semibold text-soft;
+    }
+
+    /* Technical Latin-only label: mono, uppercase, tracked. Never use on
+       translatable text. */
+    .label-tech {
+        @apply font-mono text-xs font-semibold uppercase tracking-[0.14em] text-soft;
+    }
+
+    .label {
+        @apply mb-1.5 block text-sm font-semibold text-ink;
+    }
+
+    .help {
+        @apply mt-1.5 text-xs leading-relaxed text-soft;
+    }
+
+    .input {
+        @apply w-full rounded-md border border-line-strong bg-white px-3.5 py-2.5 text-sm text-ink placeholder:text-faint focus:border-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-600/20;
+    }
+
+    .input-error {
+        @apply border-fail focus:border-fail focus:ring-fail/20;
+    }
+
+    .field-error {
+        @apply mt-1.5 flex items-start gap-1.5 text-xs font-medium text-fail;
+    }
+
+    /* Chips / verdict tags */
+    .chip {
+        @apply inline-flex items-center gap-1 rounded px-2 py-0.5 text-[0.68rem] font-semibold;
+    }
+
+    .chip-pass {
+        @apply inline-flex items-center gap-1 rounded px-2 py-0.5 text-[0.68rem] font-semibold bg-pass-soft text-pass;
+    }
+
+    .chip-warn {
+        @apply inline-flex items-center gap-1 rounded px-2 py-0.5 text-[0.68rem] font-semibold bg-warn-soft text-warn;
+    }
+
+    .chip-fail {
+        @apply inline-flex items-center gap-1 rounded px-2 py-0.5 text-[0.68rem] font-semibold bg-fail-soft text-fail;
+    }
+
+    .chip-info {
+        @apply inline-flex items-center gap-1 rounded px-2 py-0.5 text-[0.68rem] font-semibold bg-info-soft text-info;
+    }
+
+    .chip-neutral {
+        @apply inline-flex items-center gap-1 rounded px-2 py-0.5 text-[0.68rem] font-semibold bg-report-strong text-soft;
+    }
+
+    /* Grade stamp — the document mark */
+    .grade-stamp {
+        @apply inline-flex h-14 w-14 shrink-0 select-none items-center justify-center rounded border-2 font-mono text-3xl font-semibold leading-none;
+        box-shadow: inset 0 0 0 3px #ffffff;
+        transform: rotate(-3deg);
+    }
+
+    .grade-stamp--excellent,
+    .grade-stamp--good {
+        @apply border-pass text-pass;
+        background-color: var(--color-pass-soft);
+    }
+
+    .grade-stamp--fair {
+        @apply border-warn text-warn;
+        background-color: var(--color-warn-soft);
+    }
+
+    .grade-stamp--poor {
+        @apply border-fail text-fail;
+        background-color: var(--color-fail-soft);
+    }
+
+    .link {
+        @apply font-semibold text-brand-700 underline decoration-brand-300 underline-offset-4 hover:decoration-brand-600;
+    }
+
+    .table-wrap {
+        @apply overflow-x-auto rounded-md border border-line;
+    }
+
+    .data-table {
+        @apply w-full border-collapse text-start text-sm;
+    }
+
+    .data-table th {
+        @apply border-b border-line bg-report px-3 py-2 text-start text-[0.7rem] font-semibold text-soft;
+    }
+
+    .data-table td {
+        @apply border-b border-line/70 px-3 py-2 align-top text-ink last:border-0;
+    }
+
+    .data-table tbody tr:hover {
+        @apply bg-report/70;
+    }
+
+    .kv {
+        @apply grid gap-x-6 gap-y-2 sm:grid-cols-2;
+    }
+
+    .kv dt {
+        @apply text-[0.7rem] font-semibold text-soft;
+    }
+
+    .kv dd {
+        @apply mb-2 break-words text-sm text-ink;
+    }
+
+    .anchor-target {
+        scroll-margin-top: 6rem;
+    }
+
+    /* Score ring — conic progress with a mono readout */
+    .score-ring {
+        --ring-color: var(--color-pass);
+        --ring-track: var(--color-line);
+        display: grid;
+        place-items: center;
+        width: 8.5rem;
+        height: 8.5rem;
+        border-radius: 9999px;
+        background:
+            radial-gradient(closest-side, #fff 78%, transparent 79% 100%),
+            conic-gradient(var(--ring-color) calc(var(--score) * 1%), var(--ring-track) 0);
+        position: relative;
+    }
+
+    .score-ring::after {
+        content: '';
+        position: absolute;
+        inset: 0.55rem;
+        border-radius: inherit;
+        border: 1px solid var(--color-line);
+    }
+
+    .score-ring--sm {
+        width: 4.5rem;
+        height: 4.5rem;
+    }
+
+    .score-ring--lg {
+        width: 11rem;
+        height: 11rem;
+    }
+
+    .tone-excellent,
+    .tone-good {
+        color: var(--color-pass);
+    }
+
+    .tone-fair {
+        color: var(--color-warn);
+    }
+
+    .tone-poor {
+        color: var(--color-fail);
+    }
+
+    .ring-excellent,
+    .ring-good {
+        --ring-color: var(--color-pass);
+    }
+
+    .ring-fair {
+        --ring-color: var(--color-warn);
+    }
+
+    .ring-poor {
+        --ring-color: var(--color-fail);
+    }
+
+    /* Finding rows — problem / cause / fix */
+    .finding {
+        @apply flex gap-3 border-t border-line/70 px-4 py-4 first:border-t-0 sm:px-5;
+    }
+
+    .finding-icon {
+        @apply mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded;
+    }
+
+    .finding-title {
+        @apply text-sm font-bold text-ink;
+    }
+
+    .finding-detail {
+        @apply mt-0.5 text-sm leading-relaxed text-soft;
+    }
+
+    .finding-fix {
+        @apply mt-2 rounded border-l-4 border-brand-600 bg-brand-50 px-3 py-2 text-xs leading-relaxed text-ink;
+    }
+
+    /* Alerts */
+    .alert {
+        @apply flex items-start gap-3 rounded-md border px-4 py-3 text-sm;
+    }
+
+    .alert-success {
+        @apply flex items-start gap-3 rounded-md border px-4 py-3 text-sm border-pass/30 bg-pass-soft text-ink;
+    }
+
+    .alert-error {
+        @apply flex items-start gap-3 rounded-md border px-4 py-3 text-sm border-fail/30 bg-fail-soft text-ink;
+    }
+
+    .alert-warn {
+        @apply flex items-start gap-3 rounded-md border px-4 py-3 text-sm border-warn/30 bg-warn-soft text-ink;
+    }
+
+    .alert-info {
+        @apply flex items-start gap-3 rounded-md border px-4 py-3 text-sm border-info/30 bg-info-soft text-ink;
+    }
+
+    .pagination-link {
+        @apply inline-flex min-w-9 items-center justify-center rounded border border-line-strong bg-white px-2.5 py-1.5 text-sm font-semibold text-soft hover:bg-report hover:text-ink;
+    }
+
+    .pagination-active {
+        @apply border-brand-600 bg-brand-600 text-white hover:bg-brand-600;
+    }
+
+    .pagination-disabled {
+        @apply cursor-not-allowed border-line bg-report text-faint hover:bg-report;
+    }
+
+    /* The tool-like scan console on the homepage */
+    .scan-console {
+        @apply rounded-lg border border-line-strong bg-white;
+        box-shadow: 0 20px 50px -30px rgba(27, 67, 184, 0.35);
+    }
+}
+
+/* Touch targets: keep controls at least 44px on phones (WCAG 2.5.5). */
+@media (max-width: 767px) {
+    .btn,
+    .btn-primary,
+    .btn-secondary,
+    .btn-ghost,
+    .btn-danger,
+    .pagination-link,
+    .lang-btn,
+    [data-menu-toggle],
+    .input {
+        min-height: 44px;
+    }
+
+    .btn,
+    .btn-primary,
+    .btn-secondary,
+    .btn-ghost,
+    .btn-danger,
+    .pagination-link,
+    .lang-btn,
+    [data-menu-toggle] {
+        min-width: 44px;
+    }
+
+    .btn-sm {
+        padding-top: 0.55rem;
+        padding-bottom: 0.55rem;
+    }
+
+    .brand-link,
+    .tap-link,
+    footer nav a {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+    }
+
+    footer nav a {
+        min-width: 44px;
+        justify-content: center;
+    }
+}
+
+@page {
+    size: A4;
+    margin: 14mm;
+}
+
+@media print {
+    body {
+        background: #fff !important;
+        color: #000;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .print-block {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .panel,
+    .panel-soft,
+    .scan-console {
+        border-color: #9aa4b2 !important;
+        box-shadow: none !important;
+    }
+
+    a[href]::after {
+        content: '';
+    }
+
+    .score-ring,
+    .grade-stamp {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+
+    .grade-stamp {
+        transform: none;
+    }
+
+    /* Keep wide evidence tables inside the printable page: no clipped tables
+       and no horizontal scroll on paper. */
+    .table-wrap {
+        overflow: visible !important;
+    }
+
+    .data-table {
+        width: 100% !important;
+        table-layout: fixed;
+    }
+
+    .data-table th,
+    .data-table td {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    details {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+}
